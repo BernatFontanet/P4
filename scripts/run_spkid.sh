@@ -91,7 +91,7 @@ compute_lpcc(){
     shift
     for filename in $(sort $*); do
         mkdir -p `dirname $w/$FEAT/$filename.$FEAT`
-        EXEC="wav2lpcc 25 25 $db/$filename.wav $w/$FEAT/$filename.$FEAT"
+        EXEC="wav2lpcc 1 1 $db/$filename.wav $w/$FEAT/$filename.$FEAT" #dos numeros aleatorios de momento
         echo $EXEC && $EXEC || exit 1
     done
 }
@@ -101,7 +101,7 @@ compute_mfcc(){
     shift
     for filename in $(sort $*); do
         mkdir -p `dirname $w/$FEAT/$filename.$FEAT`
-        EXEC="wav2mfcc 20 36 $db/$filename.wav $w/$FEAT/$filename.$FEAT"
+        EXEC="wav2mfcc 1 1 $db/$filename.wav $w/$FEAT/$filename.$FEAT" #dos numeros aleatorios de momento
         echo $EXEC && $EXEC || exit 1
     done
 }
