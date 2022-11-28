@@ -17,7 +17,7 @@ cleanup() {
    \rm -f $base.*
 }
 
-if [[ $# != 4 ]]; then
+if [[ $# != 5 ]]; then
    echo "$0 mfcc_order filter_bank_order input.wav output.mfcc"
    exit 1
 fi
