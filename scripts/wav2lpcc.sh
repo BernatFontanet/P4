@@ -47,7 +47,7 @@ fi
 
 # Main command for feature extration
 sox $inputfile -t raw -e signed -b 16 - | $X2X +sf | $FRAME -l 240 -p 80 | $WINDOW -l 240 -L 240 |
-	$LPC -l 240 -m $lpc_order | $LPCC -m $lpcc_order > $base.lpcc 
+	$LPC -l 240 -m $lpc_order | $LPCC -m $lpc_order > $base.lpcc
    
 
 # Our array files need a header with the number of cols and rows:
@@ -58,4 +58,3 @@ nrow=`$X2X +fa < $base.lpcc | wc -l | perl -ne 'print $_/'$ncol', "\n";'`
 echo $nrow $ncol | $X2X +aI > $outputfile
 cat $base.lpcc >> $outputfile
 
-exit

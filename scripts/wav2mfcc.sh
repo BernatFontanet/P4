@@ -54,6 +54,5 @@ nrow=`$X2X +fa < $base.mfcc | wc -l | perl -ne 'print $_/'$ncol', "\n";'`
 
 # Build fmatrix file by placing nrow and ncol in front, and the data after them
 echo $nrow $ncol | $X2X +aI > $outputfile
-cat $base.lp >> $outputfile
+cat $base.mfcc >> $outputfile
 
-exit
