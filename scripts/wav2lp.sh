@@ -22,7 +22,7 @@ if [[ $# != 3 ]]; then
    exit 1
 fi
 
-#argumentos script
+# Script arguments
 lpc_order=$1
 inputfile=$2
 outputfile=$3
@@ -54,3 +54,4 @@ nrow=`$X2X +fa < $base.lp | wc -l | perl -ne 'print $_/'$ncol', "\n";'`
 # Build fmatrix file by placing nrow and ncol in front, and the data after them
 echo $nrow $ncol | $X2X +aI > $outputfile
 cat $base.lp >> $outputfile
+
