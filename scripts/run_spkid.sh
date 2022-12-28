@@ -18,13 +18,12 @@ set -o pipefail
 # - db_devel: directory of the speecon database used during development
 # - db_test:  directory of the database used in the final test
 lists=lists
-w=work
-name_exp=one
-db_devel=spk_8mu/speecon
+w=work #si hacemos lp -> work/lp, si hacemos mfcc ->work/mfcc, si hacemos gmm de lp-> work/gmm/lp
+#work/ficheros_temporales_y_de_resultado
+name_exp=one #cambiar nombre a los ficheros temp y de resultados
+db_devel=spk_8mu/speecon #
 db_test=spk_8mu/sr_test
-
 world=users
-
 # Ficheros de resultados del reconocimiento y verificación
 LOG_CLASS=$w/class_${FEAT}_${name_exp}.log
 LOG_VERIF=$w/verif_${FEAT}_${name_exp}.log
@@ -77,36 +76,38 @@ fi
 # \TODO
 # Create your own features with the name compute_$FEAT(), where $FEAT is the name of the feature.
 # - Select (or change) different features, options, etc. Make you best choice and try several options.
-# \DONE
 
 compute_lp() {
     db=$1
     shift
     for filename in $(sort $*); do
         mkdir -p `dirname $w/$FEAT/$filename.$FEAT`
-        EXEC="wav2lp 15 $db/$filename.wav $w/$FEAT/$filename.$FEAT" 
+        EXEC="wav2lp 26 $db/$filename.wav $w/$FEAT/$filename.$FEAT"
         echo $EXEC && $EXEC || exit 1
     done
 }
 
 compute_lpcc() {
-    db1=$1
+#Con el comando shift el $1 desaparece y los otros decrementan una unidad, entonces $* no incluye el primero pero si todos
+    db=$1
     shift
     for filename in $(sort $*); do
         mkdir -p `dirname $w/$FEAT/$filename.$FEAT`
-        EXEC="wav2lpcc 25 25 $db1/$filename.wav $w/$FEAT/$filename.$FEAT" 
+        EXEC="wav2lpcc 30 30 $db/$filename.wav $w/$FEAT/$filename.$FEAT"
         echo $EXEC && $EXEC || exit 1
     done
 }
 
 compute_mfcc() {
-    db2=$1
+#Con el comando shift el $1 desaparece y los otros decrementan una unidad, entonces $* no incluye el primero pero si todos
+    db=$1
     shift
     for filename in $(sort $*); do
-    mkdir  -p `dirname $w/$FEAT/$filename.$FEAT`
-    EXEC="wav2mfcc 8 20 36 $db2/$filename.wav $w/$FEAT/$filename.$FEAT" 
+        mkdir -p `dirname $w/$FEAT/$filename.$FEAT`
+        EXEC="wav2mfcc 20 35 $db/$filename.wav $w/$FEAT/$filename.$FEAT"
         echo $EXEC && $EXEC || exit 1
     done
+
 }
 
 #  Set the name of the feature (not needed for feature extraction itself)
@@ -136,7 +137,7 @@ for cmd in $*; do
        for dir in $db_devel/BLOCK*/SES* ; do
            name=${dir/*\/}
            echo $name ----
-           EXEC="gmm_train -v 2 -T 0.0001 -N 50 -m 20 -d $w/$FEAT -e $FEAT -g $w/gmm/$FEAT/$name.gmm $lists/class/$name.train"
+           EXEC="gmm_train -v 1 -T 0.001 -N 100 -m 32 -d $w/$FEAT -e $FEAT -g $w/gmm/$FEAT/$name.gmm $lists/class/$name.train -i 1"
            echo $EXEC && $EXEC || exit 1
            echo
        done
@@ -162,9 +163,9 @@ for cmd in $*; do
        # Implement 'trainworld' in order to get a Universal Background Model for speaker verification
        #
        # - The name of the world model will be used by gmm_verify in the 'verify' command below.
-       EXEC="gmm_train -v 2 -T 0.0001 -N 100 -m 40 -d $w/$FEAT -e $FEAT -g $w/gmm/$FEAT/$world.gmm $lists/verif/$world.train"
+        EXEC="gmm_train -v 1 -T 0.001 -N 100 -m 32 -d $w/$FEAT -e $FEAT -g $w/gmm/$FEAT/$world.gmm $lists/verif/$world.train -i 1"
         echo $EXEC && $EXEC || exit 1
-
+     
 
    elif [[ $cmd == verify ]]; then
        ## @file
@@ -175,9 +176,10 @@ for cmd in $*; do
        #   For instance:
        #   * <code> gmm_verify ... > $LOG_VERIF </code>
        #   * <code> gmm_verify ... | tee $LOG_VERIF </code>
-       # \DONE
-       EXEC="gmm_verify -d $w/$FEAT -e $FEAT -D $w/gmm/$FEAT -E gmm -w $world $lists/gmm.list $lists/verif/all.test $lists/verif/all.test.candidates"
+        EXEC="gmm_verify -d $w/$FEAT -e $FEAT -D $w/gmm/$FEAT -E gmm -w $world $lists/gmm.list $lists/verif/all.test $lists/verif/all.test.candidates"
         echo $EXEC && $EXEC | tee $TEMP_VERIF || exit 1
+
+
 
    elif [[ $cmd == verifyerr ]]; then
        if [[ ! -s $TEMP_VERIF ]] ; then
@@ -186,6 +188,7 @@ for cmd in $*; do
        fi
        # You can pass the threshold to spk_verif_score.pl or it computes the
        # best one for these particular results.
+ 
        spk_verif_score $TEMP_VERIF | tee -a $LOG_VERIF
 
    elif [[ $cmd == finalclass ]]; then
@@ -197,10 +200,9 @@ for cmd in $*; do
        #
        # El fichero con el resultado del reconocimiento debe llamarse $FINAL_CLASS, que deberá estar en el
        # directorio de la práctica (PAV/P4).
-       # \DONE
        compute_$FEAT $db_test $lists/final/class.test
        EXEC="gmm_classify -d $w/$FEAT -e $FEAT -D $w/gmm/$FEAT -E gmm $lists/gmm.list $lists/final/class.test"
-        echo $EXEC && $EXEC | tee $FINAL_CLASS || exit 1
+       echo $EXEC && $EXEC | tee $FINAL_CLASS || exit 1
    
    elif [[ $cmd == finalverif ]]; then
        ## @file
@@ -219,12 +221,12 @@ for cmd in $*; do
        # candidato para la señal a verificar. En $FINAL_VERIF se pide que la tercera columna sea 1,
        # si se considera al candidato legítimo, o 0, si se considera impostor. Las instrucciones para
        # realizar este cambio de formato están en el enunciado de la práctica.
-       # \DONE
+
        compute_$FEAT $db_test $lists/final/verif.test
        EXEC="gmm_verify -d $w/$FEAT -e $FEAT -D $w/gmm/$FEAT -E gmm -w $world $lists/gmm.list $lists/final/verif.test $lists/final/verif.test.candidates"
        echo $EXEC && $EXEC | tee $TEMP_VERIF || exit 1
         perl -ane 'print "$F[0]\t$F[1]\t";
-            if ($F[2] > 0.0756160438401944) {print "1\n"}
+            if ($F[2] > 0.2593305431556) {print "1\n"}
             else {print "0\n"}' $TEMP_VERIF | tee $FINAL_VERIF
    # If the command is not recognize, check if it is the name
    # of a feature and a compute_$FEAT function exists.
