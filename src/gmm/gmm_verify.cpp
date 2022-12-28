@@ -25,9 +25,8 @@ float verify(const GMM &gmm_candidate, const fmatrix &dat)
 {
 
 	//TODO: implement verification score based on gmm of the candidate
-	float score = 0.0F;
-	score= gmm_candidate.logprob(dat);
-	return score;
+	//DONE
+	return gmm_candidate.logprob(dat);
 }
 
 
@@ -39,6 +38,7 @@ float verify(const GMM &gmm_candidate, const GMM & gmm_world, const fmatrix &dat
 	  lprobcand is an informative values to be printed as debug information.
 	  The decision is based on the returned value
 	 */
+	//DONE
 	float score = 0.0F;
 	lprobcand = gmm_candidate.logprob(dat);
 	lprobbackground = gmm_world.logprob(dat);
@@ -169,9 +169,9 @@ int usage(const char *progname, int err)
 		<< "         \tname does not include directory and extension:\n"
 		<< "         \tthe dir option (-D) and ext (-e) will be added\n\n";
 
-	cerr << "Each \"trial\" is defined by the speech files and the candidate (pretended user)\n"
+   cerr << "Each \"trial\" is defined by the speech files and the candidate (pretended user)\n"
 		<< "The number of items in both files has to be the same.\n\n";
-	cerr << "For each input sentence, different feature files (and different GMMs) can be provided\n"
+   cerr << "For each input sentence, different feature files (and different GMMs) can be provided\n"
 		<< "using several times the options -d -e -D and -E (aunque no está realmente implementado)\n";
 
 	return err;

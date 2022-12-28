@@ -1,4 +1,4 @@
-#include <unistd.h>				 //getopt function, to parse options
+#include <unistd.h> //getopt function, to parse options
 #include <iostream>
 #include <fstream>
 #include <stdlib.h>
@@ -56,6 +56,7 @@ int main(int argc, const char *argv[])
 	///
 	/// Other alternatives are: vq, em_split... See the options of the program and place each
 	/// initicialization accordingly.
+	/// \DONE
 	switch (init_method) {
 		case 0:
 			gmm.random_init(data, nmix);
@@ -72,6 +73,7 @@ int main(int argc, const char *argv[])
 	}
 
 	/// \TODO Apply EM to estimate GMM parameters (complete the funcion in gmm.cpp)
+	/// \DONE
 	gmm.em(data, em_iterations, em_threshold, verbose);
 	//Create directory, if it is needed
 	gmm_filename.checkDir();
