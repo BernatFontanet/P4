@@ -17,16 +17,17 @@ cleanup() {
    \rm -f $base.*
 }
 
-if [[ $# != 4 ]]; then
-   echo "$0 mfcc_order melbank_filter_order input.wav output.mfcc"
+if [[ $# != 5 ]]; then
+   echo "$0 fm mfcc_order melbank_filter_order input.wav output.mfcc"
    exit 1
 fi
 
 # Script arguments
-mfcc_order=$1
-melbank_filter_order=$2
-inputfile=$3
-outputfile=$4
+fm=$1
+mfcc_order=$2
+melbank_filter_order=$3
+inputfile=$4
+outputfile=$5
 
 UBUNTU_SPTK=1
 if [[ $UBUNTU_SPTK == 1 ]]; then
