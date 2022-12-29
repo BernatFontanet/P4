@@ -42,6 +42,7 @@ ejercicios indicados.
 - Explique el procedimiento seguido para obtener un fichero de formato *fmatrix* a partir de los ficheros de
   salida de SPTK (líneas 45 a 51 del script `wav2lp.sh`).
     <img src="fmatrix.png" align="center">
+
     Mediante fmatrix creamos una matrix de nrow filas, que corresponden a las tramas de la señal, y ncol columnas, que corresponden a los coeficientes de cada trama.
     El número de columnas se corresponde con el número de coeficientes del orden del predictor lineal más uno.
     El número de filas se calcula primero convirtiendo la señal a tecto y se cuentan las filas mediante wc -l.
@@ -102,9 +103,17 @@ Complete el código necesario para entrenar modelos GMM.
 - Inserte una gráfica que muestre la función de densidad de probabilidad modelada por el GMM de un locutor
   para sus dos primeros coeficientes de MFCC.
 
+  <img src="cosa-1.png" align="center">
+
 - Inserte una gráfica que permita comparar los modelos y poblaciones de dos locutores distintos (la gŕafica
   de la página 20 del enunciado puede servirle de referencia del resultado deseado). Analice la capacidad
   del modelado GMM para diferenciar las señales de uno y otro.
+
+  <img src="compa-1.png" align="center">
+
+  <img src="compa-2.png" align="center">
+
+  Cuando el locutor y la pobación coinciden, obviamente obtenemos el mejor resultado, como vemos en la primera y en la tercera gráfica.
 
 ### Reconocimiento del locutor.
 
